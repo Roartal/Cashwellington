@@ -20,17 +20,23 @@ public class BasicWalkerController : MonoBehaviour {
 
 	//Keycode used for jumping;
 	public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode sprintingKey = KeyCode.LeftShift;
 
-	//Jump key variables;
-	bool jumpKeyWasPressed = false;
+    //Jump key variables;
+    bool jumpKeyWasPressed = false;
 	bool jumpKeyWasLetGo = false;
 	bool jumpKeyIsPressed = false;
 
-	//Movement speed;
-	public float movementSpeed = 7f;
+    //Movement speed;
+    public float crouchingSpeed = 5f;
+    public float walkingSpeed = 7f;
+    public float sprintingSpeed = 10f;
 
-	//'Aircontrol' determines to what degree the player is able to move while in the air;
-	[Range(0f, 1f)]
+    public float movementSpeed = 7f;
+    float desiredMovementSpeed = 7f;
+
+    //'Aircontrol' determines to what degree the player is able to move while in the air;
+    [Range(0f, 1f)]
 	public float airControl = 0.4f;
 
 	//Jump speed;
@@ -69,7 +75,7 @@ public class BasicWalkerController : MonoBehaviour {
 		Sliding,
 		Falling,
 		Rising,
-		Jumping
+		Jumping,
 	}
 	ControllerState currentControllerState = ControllerState.Falling;
 	 
@@ -117,6 +123,8 @@ public class BasicWalkerController : MonoBehaviour {
 
 		//Apply friction and gravity to 'momentum';
 		HandleMomentum();
+
+        movementSpeed = Mathf.SmoothStep(movementSpeed, desiredMovementSpeed, 0.2f);
 
 		//Check if the player has initiated a jump;
 		HandleJumping();
@@ -203,9 +211,14 @@ public class BasicWalkerController : MonoBehaviour {
 		 return (Input.GetKey(jumpKey));
 	}
 
-	//Handle state transitions;
-	//Determine current controller state based on current momentum and whether the controller is grounded (or not);
-	void HandleState()
+    protected virtual bool isSprintingKeyPressed()
+    {
+        return (Input.GetKey(sprintingKey));
+    }
+
+    //Handle state transitions;
+    //Determine current controller state based on current momentum and whether the controller is grounded (or not);
+    void HandleState()
 	{
 		//Check if vertical momentum is pointing upwards;
 		bool _isRising = IsRisingOrFalling() && (VectorMath.GetDotProduct(GetMomentum(), tr.up) > 0f);
@@ -298,7 +311,7 @@ public class BasicWalkerController : MonoBehaviour {
 				currentControllerState = ControllerState.Rising;
 
 			break;
-		}
+        }
 	}
 
 	//Check if player has initiated a jump;
@@ -306,6 +319,13 @@ public class BasicWalkerController : MonoBehaviour {
 	{
 		if(currentControllerState == ControllerState.Grounded)
 		{
+            if (isSprintingKeyPressed() == true && (jumpKeyIsPressed == false || jumpKeyWasPressed == false))
+            {
+                desiredMovementSpeed = sprintingSpeed;
+            }
+            else
+                desiredMovementSpeed = walkingSpeed;
+
 			if(jumpKeyIsPressed == true || jumpKeyWasPressed)
 			{
 				//Call events;
