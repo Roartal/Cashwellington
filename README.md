@@ -1,4 +1,4 @@
-# Cashwellington Quoqod
+# Cashwellington
 
 > Quo est erat demonsdrandudm.
 
