@@ -86,7 +86,10 @@ public class CameraController : MonoBehaviour {
 
 	void Update()
 	{
-		HandleCameraRotation();
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
+        Debug.Log(Cursor.lockState);
+        HandleCameraRotation();
 	}
 
 	//Return user input; This function can be overridden by extending scripts to implement custom input;
