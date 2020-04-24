@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 //This script smoothes the position of a gameobject;
 public class SmoothPosition : MonoBehaviour {
 
 	//The target transform, whose position values will be copied and smoothed;
 	public Transform target;
+    public Transform shakeTarget;
 	Transform tr;
 
 	Vector3 currentPosition;
@@ -31,7 +33,8 @@ public class SmoothPosition : MonoBehaviour {
 	public enum SmoothType
 	{
 		Lerp,
-		SmoothDamp, 
+		SmoothDamp,
+        Quirky
 	}
 
 	public SmoothType smoothType;
@@ -76,11 +79,13 @@ public class SmoothPosition : MonoBehaviour {
 	void SmoothUpdate()
 	{
 		//Smooth current position;
-		currentPosition = Smooth (currentPosition, target.position, lerpSpeed);
+		//currentPosition = Smooth (currentPosition, target.position, lerpSpeed);
+        DOTween.To(() => currentPosition, x => currentPosition = x, target.position, 0.1f).SetEase(Ease.OutBounce);
+        //shakeTarget.DOShakePosition(0.2f,0.1f);
 
-		//Set position;
-		tr.position = currentPosition;
-	}
+        //Set position;
+         tr.position = currentPosition + localPositionOffset;
+    }
 
 	Vector3 Smooth(Vector3 _start, Vector3 _target, float _smoothTime)
 	{
@@ -103,7 +108,8 @@ public class SmoothPosition : MonoBehaviour {
 				return Vector3.Lerp (_start, _target, Time.deltaTime * _smoothTime);
 			case SmoothType.SmoothDamp:
 				return Vector3.SmoothDamp (_start, _target, ref refVelocity, smoothDampTime);
-			default:
+            case SmoothType.Quirky:
+            default:
 				return Vector3.zero;
 		}
 	}

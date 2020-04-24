@@ -26,6 +26,9 @@ public class AcR_Body : MonoBehaviour
     private bool PlayerControllable;
 
     [SerializeField]
+    private bool AIControlled;
+
+    [SerializeField]
     private float PlayerWalkSpeed = 10;
 
     [SerializeField]
@@ -43,6 +46,8 @@ public class AcR_Body : MonoBehaviour
     private bool isGrounded;
     private bool fallingTimerTriggered;
     private float fallingTimerTime;
+
+    public AI_Controller brain;
 
 
     void Start()
@@ -168,5 +173,23 @@ public class AcR_Body : MonoBehaviour
         //Push the body around if the Player is able to control it
         rb.AddRelativeForce(-Input.GetAxis("Vertical") * PlayerWalkSpeed, 0, Input.GetAxis("Horizontal") * PlayerWalkSpeed);
         rb.AddRelativeTorque(new Vector3(0, Input.GetAxis("Mouse X") * PlayerTurnSpeed, 0));
+    }
+
+    public void AIInstructions(Transform target)
+    {
+        rb.AddRelativeForce(Vector3.right * PlayerWalkSpeed);
+        Vector3 targetDelta = target.position - transform.position;
+
+        Debug.DrawLine(transform.position, target.position, Color.green, Time.deltaTime);
+
+        //get the angle between transform.forward and target delta
+        float angleDiff = Vector3.Angle(transform.worldToLocalMatrix.MultiplyVector(transform.forward), targetDelta);
+
+        // get its cross product, which is the axis of rotation to
+        // get from one vector to the other
+        Vector3 cross = Vector3.Cross(transform.right, targetDelta);
+
+      //  rb.AddRelativeForce(targetDelta.x * PlayerWalkSpeed, 0, targetDelta.z * PlayerWalkSpeed);
+        rb.AddRelativeTorque(cross * angleDiff * PlayerTurnSpeed);
     }
 }

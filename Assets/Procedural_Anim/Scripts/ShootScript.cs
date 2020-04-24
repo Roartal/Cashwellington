@@ -32,9 +32,9 @@ public class ShootScript : MonoBehaviour
         if (Input.GetKeyDown(keyCode))
         {
             var Bullet = GameObject.Instantiate(ProjectilePrefab, transform.position + transform.TransformDirection(ShootOffset), transform.rotation);
-            Rigidbody rb = Bullet.GetComponent<Rigidbody>();
-            rb.AddRelativeForce(ShotDirection * ShotForce, ForceMode.Impulse);
-            Destroy(Bullet, 5);
+            //Rigidbody rb = Bullet.GetComponent<Rigidbody>();
+           // rb.AddRelativeForce(ShotDirection * ShotForce, ForceMode.Impulse);
+           // Destroy(Bullet, 5);
         }
     }
 }

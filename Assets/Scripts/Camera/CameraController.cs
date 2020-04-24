@@ -57,14 +57,17 @@ public class CameraController : MonoBehaviour {
 	protected Transform tr;
 	protected Camera cam;
 
+    public static Camera instance;
+
 	//Setup references.
 	void Awake () {
 		tr = transform;
-		cam = GetComponent<Camera>();
-
+		cam = GetComponentInChildren<Camera>();
+        if (instance == null)
+            instance = cam;
+        else
+            Debug.LogError("Warning, there is multiple cameras with the CameraController.cs! NOT GOOD.");
 		//If no camera component has been attached to this gameobject, search the transform's children;
-		if(cam == null)
-			cam = GetComponentInChildren<Camera>();
 
 		lastPosition = tr.position;
 
@@ -86,9 +89,6 @@ public class CameraController : MonoBehaviour {
 
 	void Update()
 	{
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
-        Debug.Log(Cursor.lockState);
         HandleCameraRotation();
 	}
 
