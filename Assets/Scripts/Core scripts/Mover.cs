@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using EZCameraShake;
 
 //This script handles all physics, collision detection and ground detection;
 //It expects a movement velocity (via 'SetVelocity') every 'FixedUpdate' frame from an external script (like a controller script) to work;
@@ -31,12 +32,16 @@ public class Mover : MonoBehaviour {
 	public int sensorArrayRayCount = 6;
 	public bool sensorArrayRowsAreOffset = false;
 
+    public Transform camera;
+
 	//Ground detection variables;
 	bool isGrounded = false;
 
 	//Sensor range variables;
 	bool IsUsingExtendedSensorRange  = true;
 	float baseSensorRange = 0f;
+
+    Vector3 additionalVelocity;
 
 	//Current upwards (or downwards) velocity necessary to keep the correct distance to the ground;
 	Vector3 currentGroundAdjustmentVelocity = Vector3.zero;
@@ -252,10 +257,33 @@ public class Mover : MonoBehaviour {
 		Check();
 	}
 
-	//Set mover velocity;
-	public void SetVelocity(Vector3 _velocity)
+    public void AddVelocity(float power, Vector3 position, float explosionRadius, float upforce)
+    {
+        Vector3 dir = transform.position - position;
+
+        float dist = dir.magnitude;
+        float powerWithFalloff;
+        if (dist > explosionRadius)
+            powerWithFalloff = 0.0f;
+        else
+            powerWithFalloff = (power - ((dist / explosionRadius) * power)*0.9f)*0.25f;
+
+
+        if (dir.y < 0) dir.y = -dir.y; // reflect down force on the ground
+        additionalVelocity += dir.normalized * powerWithFalloff + Vector3.up * upforce;
+        print(powerWithFalloff);
+        
+        if(camera != null)
+        {
+            CameraShaker.Instance.ShakeOnce(powerWithFalloff / 8f, 4f, .1f,1f);
+        }
+    }
+
+    //Set mover velocity;
+    public void SetVelocity(Vector3 _velocity)
 	{
-		rig.velocity = _velocity + currentGroundAdjustmentVelocity;	
+		rig.velocity = _velocity + currentGroundAdjustmentVelocity + additionalVelocity;
+        additionalVelocity = Vector3.Slerp(additionalVelocity, Vector3.zero, 0.15f);
 	}	
 
 	//Returns 'true' if mover is touching ground and the angle between hte 'up' vector and ground normal is not too steep (e.g., angle < slope_limit);

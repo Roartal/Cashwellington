@@ -78,6 +78,7 @@ public class BulletScript : MonoBehaviour
 
     void ApplyDamage(bool d = true)
     {
+        hit.collider.SendMessage(damageMethodName, Damage(), SendMessageOptions.DontRequireReceiver);
         penetrationCount++;
         Instantiate(hitEffect, myTransform.position, myTransform.rotation);
         //Reduce the enemy's health
