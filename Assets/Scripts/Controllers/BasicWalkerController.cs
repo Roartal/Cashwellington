@@ -10,6 +10,7 @@ public class BasicWalkerController : MonoBehaviour {
 	//References to attached components;
 	protected Transform tr;
 	protected Mover mover;
+    protected RotateTowardsVelocity speedParticles;
 
 	//Names of input axes used for horizontal and vertical input;
 	public string horizontalInputAxis = "Horizontal";
@@ -34,6 +35,8 @@ public class BasicWalkerController : MonoBehaviour {
 
     public float movementSpeed = 7f;
     float desiredMovementSpeed = 7f;
+
+    public float dashingForce = 7f;
 
     //'Aircontrol' determines to what degree the player is able to move while in the air;
     [Range(0f, 1f)]
@@ -83,8 +86,10 @@ public class BasicWalkerController : MonoBehaviour {
 	void Awake () {
 		mover = GetComponent<Mover>();
 		tr = GetComponent<Transform>();
+        speedParticles = GetComponentInChildren<RotateTowardsVelocity>();
 
-		Setup();
+
+        Setup();
 	}
 
 	//This function is called right after Awake(); It can be overridden by inheriting scripts;
@@ -95,6 +100,13 @@ public class BasicWalkerController : MonoBehaviour {
 
 	void Update()
 	{
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            mover.AddVelocity(dashingForce, transform.position - Camera.main.transform.forward, 4f, 15f, true, false);
+            if (speedParticles != null)
+                speedParticles.EmitInstantly(25);
+        }
+
 		HandleJumpKeyInput();
 	}
 

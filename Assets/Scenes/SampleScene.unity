@@ -7084,7 +7084,7 @@ GameObject:
   - component: {fileID: 1457344265668496}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7582,6 +7582,7 @@ MonoBehaviour:
   walkingSpeed: 7
   sprintingSpeed: 10
   movementSpeed: 10
+  dashingForce: 70
   airControl: 0.4
   jumpSpeed: 10
   jumpDuration: 0.2
@@ -7623,10 +7624,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 4122625765175665}
   shakeTarget: {fileID: 0}
-  lerpSpeed: 20
-  smoothDampTime: 0.02
-  extrapolatePosition: 0
-  updateType: 0
+  lerpSpeed: 2
+  smoothDampTime: 0.2
+  extrapolatePosition: 1
+  updateType: 1
   smoothType: 1
 --- !u!114 &114296478545983688
 MonoBehaviour:
@@ -7697,6 +7698,7 @@ MonoBehaviour:
   walkingSpeed: 6.5
   sprintingSpeed: 12.5
   movementSpeed: 7
+  dashingForce: 7
   airControl: 0.4
   jumpSpeed: 7
   jumpDuration: 0.2
@@ -7791,8 +7793,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 4122625765175665}
   smoothSpeed: 20
-  extrapolateRotation: 0
-  updateType: 0
+  extrapolateRotation: 1
+  updateType: 1
 --- !u!136 &136958806543074115
 CapsuleCollider:
   m_ObjectHideFlags: 0

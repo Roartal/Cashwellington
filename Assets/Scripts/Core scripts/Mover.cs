@@ -257,25 +257,28 @@ public class Mover : MonoBehaviour {
 		Check();
 	}
 
-    public void AddVelocity(float power, Vector3 position, float explosionRadius, float upforce)
+    public void AddVelocity(float power, Vector3 position, float explosionRadius, float upforce, bool useCameraShaker = true, bool calculateFalloff = true)
     {
         Vector3 dir = transform.position - position;
-
+        float powerToApply = power;
         float dist = dir.magnitude;
-        float powerWithFalloff;
-        if (dist > explosionRadius)
-            powerWithFalloff = 0.0f;
-        else
-            powerWithFalloff = (power - ((dist / explosionRadius) * power)*0.9f)*0.25f;
 
+        if (calculateFalloff)
+        {
+            if (dist > explosionRadius)
+                powerToApply = 0.0f;
+            else
+                powerToApply = (power - ((dist / explosionRadius) * power) * 0.9f) * 0.25f;
+        }
 
         if (dir.y < 0) dir.y = -dir.y; // reflect down force on the ground
-        additionalVelocity += dir.normalized * powerWithFalloff + Vector3.up * upforce;
-        print(powerWithFalloff);
-        
-        if(camera != null)
+        additionalVelocity += dir.normalized * powerToApply + Vector3.up * upforce;
+
+        print(powerToApply);
+
+        if (camera != null && useCameraShaker)
         {
-            CameraShaker.Instance.ShakeOnce(powerWithFalloff / 8f, 4f, .1f,1f);
+            CameraShaker.Instance.ShakeOnce(powerToApply / 8f, 4f, .1f,1f);
         }
     }
 
